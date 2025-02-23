@@ -1,5 +1,5 @@
 import { Queue } from "bullmq";
-import redis, { redis_subscriber } from "./redis";
+import redis from "./redis";
 import AppDataSource from "./database";
 import { Job } from "../api/models/job";
 
