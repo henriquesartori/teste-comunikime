@@ -14,7 +14,7 @@ Para a proposta de realizar o processamento assíncrono de arquivos CSV, eu dese
 
 Deixei uma collection do Postman pronta para teste com as 2 rotas (e uma de healthcheck) em ***data/collection.postman_collection.json***.
 
-O arquivo ***data.csv*** enviado com o escopo do projeto se encontra na mesma pasta ***data*** na raíz do projeto.
+O arquivo ***data.csv*** enviado com o escopo do projeto se encontra na mesma pasta ***data*** na raíz do projeto compactado (pois o GitHub limita arquivos maiores de 100mb).
 
 ## Inicialização
 
