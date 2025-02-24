@@ -56,7 +56,7 @@ O arquivo ***.env.example*** está preenchido com valores default (que podem ser
 
 4. **Filas (queues)**: BullMQ (Redis)
 
-    Optei por utilizar o BullMQ por ser uma biblioteca extremamente eficiente para lidar com filas dentro do node através de um servidor Redis. Fiz uma configuração simples de uma queue e um worker, mas idealmente em um projeto de maior escopo seria necessário modularizar em pastas de queues e jobs.
+    Optei por utilizar o BullMQ por ser uma biblioteca extremamente eficiente para lidar com filas dentro do node através de um servidor Redis.
 
 5. **Testes**: Jest e Supertest
 
