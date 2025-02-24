@@ -2,13 +2,14 @@ import { Job, Worker } from "bullmq";
 import { ProcessCustomersJob } from "../jobs/process_customers.job";
 import AppDataSource from "./database";
 import { Job as JobModel } from "../api/models/job";
-import { Customer } from "../api/models/customer";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const initialize = async () => {
     await AppDataSource.initialize();
 
     const repo = AppDataSource.getRepository(JobModel)
-    const customersRepo = AppDataSource.getRepository(Customer)
 
     async function Process(job: Job) {
 
@@ -18,7 +19,7 @@ const initialize = async () => {
             repo.save(job_ref);
         }
 
-        await ProcessCustomersJob(job, customersRepo)
+        await ProcessCustomersJob(job)
     }
 
     const worker = new Worker(

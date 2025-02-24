@@ -4,6 +4,7 @@ import AppDataSource from '../../src/config/database';
 import path from 'path';
 import { Customer } from '../../src/api/models/customer';
 import { StatusCodes } from 'http-status-codes';
+import redis from '../../src/config/redis';
 
 describe('Customer Controller', () => {
 
@@ -19,6 +20,7 @@ describe('Customer Controller', () => {
         if (AppDataSource.isInitialized) {
             await AppDataSource.destroy();
         }
+        await redis.quit();
     });
 
     it('deve validar o arquivo csv e salvar as linhas no banco', async () => {

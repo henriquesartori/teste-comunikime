@@ -23,7 +23,6 @@ async function addJob(name: string, data: unknown) {
             status: 'pending'
         })
     }
-
 }
 
 export { addJob }

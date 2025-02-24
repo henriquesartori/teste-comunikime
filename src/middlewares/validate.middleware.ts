@@ -15,7 +15,6 @@ export function validate<T extends z.ZodRawShape>(schema: z.ZodObject<T>, valida
                 })
             }
             else {
-                // console.error(error)
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     message: "Erro interno do servidor.",
                     error
