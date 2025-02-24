@@ -2,9 +2,6 @@ import { Job, Worker } from "bullmq";
 import { ProcessCustomersJob } from "../jobs/process_customers.job";
 import AppDataSource from "./database";
 import { Job as JobModel } from "../api/models/job";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const initialize = async () => {
     await AppDataSource.initialize();

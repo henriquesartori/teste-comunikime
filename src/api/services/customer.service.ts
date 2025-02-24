@@ -17,6 +17,8 @@ const config = {
     options: { encrypt: true, trustServerCertificate: true }
 }
 
+const BATCH_SIZE = 10_000;
+
 export async function ProcessCustomerService(filepath: string) {
 
     const dir = path.dirname(path.join(__dirname, '../../../logs'));
@@ -49,31 +51,36 @@ export async function ProcessCustomerService(filepath: string) {
             }
         }
 
-        const pool = await sql.connect(config);
-        const table = new sql.Table('customers');
+        for (let i = 0; i < customers.length; i += BATCH_SIZE) {
+            const batch = customers.slice(i, i + BATCH_SIZE);
 
-        table.columns.add('uuid', sql.UniqueIdentifier, { nullable: false });
-        table.columns.add('name', sql.NVarChar(255), { nullable: false });
-        table.columns.add('birthDate', sql.DateTime2, { nullable: false });
-        table.columns.add('gender', sql.NVarChar(50), { nullable: false });
-        table.columns.add('email', sql.NVarChar(255), { nullable: false });
-        table.columns.add('phone', sql.NVarChar(50), { nullable: false });
-        table.columns.add('address', sql.NVarChar(255), { nullable: false });
-        table.columns.add('city', sql.NVarChar(100), { nullable: false });
-        table.columns.add('state', sql.NVarChar(50), { nullable: false });
+            const pool = await sql.connect(config);
+            const table = new sql.Table('customers');
 
-        customers.forEach(c => table.rows.add(
-            c.uuid,
-            c.name,
-            c.birthDate,
-            c.gender,
-            c.email,
-            c.phone,
-            c.address,
-            c.city,
-            c.state
-        ))
-        await pool.request().bulk(table);
+            table.columns.add('uuid', sql.UniqueIdentifier, { nullable: false });
+            table.columns.add('name', sql.NVarChar(255), { nullable: false });
+            table.columns.add('birthDate', sql.DateTime2, { nullable: false });
+            table.columns.add('gender', sql.NVarChar(50), { nullable: false });
+            table.columns.add('email', sql.NVarChar(255), { nullable: false });
+            table.columns.add('phone', sql.NVarChar(50), { nullable: false });
+            table.columns.add('address', sql.NVarChar(255), { nullable: false });
+            table.columns.add('city', sql.NVarChar(100), { nullable: false });
+            table.columns.add('state', sql.NVarChar(50), { nullable: false });
+
+            batch.forEach(c => table.rows.add(
+                c.uuid,
+                c.name,
+                c.birthDate,
+                c.gender,
+                c.email,
+                c.phone,
+                c.address,
+                c.city,
+                c.state
+            ));
+
+            await pool.request().bulk(table);
+        }
 
         const message = `Processamento concluído. ${success} linhas inseridas. ${failed} falhas.`;
         logger.info({ message })

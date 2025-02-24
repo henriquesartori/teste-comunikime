@@ -2,6 +2,8 @@
 
 API em Node.js/Express que realiza um processamento assíncrono de arquivos .csv, validando, formatando e salvando em um banco SQL Server.
 
+***RESULTADO FINAL***: 1 milhão de linhas em ~20s (MacOS arm64 16GB)
+
 ## Rotas
 
 Para a proposta de realizar o processamento assíncrono de arquivos CSV, eu desenvolvi **duas rotas**:
@@ -37,8 +39,6 @@ O arquivo ***.env.example*** está preenchido com valores default (que podem ser
     Executar ```npm run migrate``` para rodar as migrations.
 
     Executar ```npm run build``` e ```npm run start``` para rodar buildado ou ```npm run dev``` a fim de testar o lint e os testes.
-
-    Executar ```npm run worker``` para rodar o worker de jobs.
 
 ## Stack da minha solução
 
@@ -76,8 +76,12 @@ O arquivo ***.env.example*** está preenchido com valores default (que podem ser
 
 - A coluna de UUID do .csv não foi usada como chave primária da tabela, considerando que seu tamanho e complexidade podem impactar negativamente a performance de índices e consultas.
 
+- A rota '/' do projeto, a qual apelidei de healthcheck, retorna um status: OK para validar que a API está UP e também retorna o número atual de customers no banco.
+
+- A minha abordagem para processar esses arquivos (customer.service.ts) consiste em realizar um bulk insert através da criação de uma estrutura de tabela diretamente no driver do mssql (o TypeORM não possui suporte para este método do SQL Server). Isto permitiu obter resultados significantemente 
+
 - A rota que inclui o processamento em fila salva o estado dos jobs em uma tabela "jobs" no banco de dados, onde é possível acompanhar o estado atual do processamento, e eventuais erros.
 
-- O worker da fila default do projeto está configurado para processar até 5 jobs simultaneamente. Este valor que eu escolhi é totalmente arbitrário. Em um ambiente real (conteinerizado) em produção a quantidade de workers poderia ser escalada, caso existisse um service no Docker pro worker em si. Na minha solução, apenas um worker é executado, e é executado de forma conjunta ao servidor, o que não seria recomendado em produção, mas faz sentido em ambiente de teste.
+- O worker da fila default do projeto (redis) está configurado para processar até 5 jobs simultaneamente. Este valor que eu escolhi é totalmente arbitrário. Em um ambiente real (conteinerizado) em produção a quantidade de workers poderia ser escalada, caso existisse um service no Docker pro worker em si. Na minha solução, apenas um worker é executado, e é executado de forma conjunta ao servidor, o que não seria recomendado em produção, mas faz sentido em ambiente de teste.
 
 - A imagem que fiz para a api em Docker está configurada para sempre rodar as migrações pendentes antes de inicializar o projeto, o que poderia ser mantido em ambiente de produção, em que cada novo build deve possuir novas migrations e, em teoria, não se deve mexer nas migrations antigas. Por este último fator, entendo que as vezes em um ambiente colaborativo esta não seria a melhor estratégia, mas a fim de testar este projeto de escopo pequeno, é prático e eficiente.
