@@ -78,7 +78,7 @@ O arquivo ***.env.example*** está preenchido com valores default (que podem ser
 
 - A rota '/' do projeto, a qual apelidei de healthcheck, retorna um status: OK para validar que a API está UP e também retorna o número atual de customers no banco.
 
-- A minha abordagem para processar esses arquivos (customer.service.ts) consiste em realizar um bulk insert através da criação de uma estrutura de tabela diretamente no driver do mssql (o TypeORM não possui suporte para este método do SQL Server). Isto permitiu obter resultados significantemente 
+- A minha abordagem para processar esses arquivos (customer.service.ts) consiste em realizar um bulk insert (em batches de 10.000) através da criação de uma estrutura de tabela diretamente no driver do mssql (o TypeORM não possui suporte para este método do SQL Server). Isto permitiu obter resultados significantemente mais rápidos.
 
 - A rota que inclui o processamento em fila salva o estado dos jobs em uma tabela "jobs" no banco de dados, onde é possível acompanhar o estado atual do processamento, e eventuais erros.
 
